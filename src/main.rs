@@ -1,14 +1,12 @@
 #[macro_use]
 extern crate rocket;
 
-mod default_template;
 use rocket::serde::{
     json::{serde_json::json, Json, Value},
     Deserialize,
 };
 use soda_sol::*;
 use std::path;
-use std::path::PathBuf;
 
 const TEMPLATES: &'static [&'static str] = &[
     "default",
@@ -18,11 +16,10 @@ const TEMPLATES: &'static [&'static str] = &[
 
 #[get("/templates")]
 fn index() -> Value {
-   // read all the files in the template folder
     let mut templates = Vec::new();
     for template in TEMPLATES {
         let template = load_template(
-            &path::Path::new(&format!("templates/{}.soda", template))
+            &path::Path::new(&format!("assets/{}.soda", template))
                 .to_string_lossy(),
         )
         .unwrap();
@@ -33,7 +30,6 @@ fn index() -> Value {
 
 #[shuttle_runtime::main]
 async fn rocket(
-    #[shuttle_static_folder::StaticFolder(folder = "templates")] _static_folder: PathBuf,
 ) -> shuttle_rocket::ShuttleRocket {
     let rocket = rocket::build().mount("/", routes![index, new]);
 
@@ -57,7 +53,7 @@ fn new(template_id: usize, generate_req: Json<GenerateReq>) -> Value {
     } else {
         let GenerateReq { idl } = generate_req.into_inner();
         let template = load_template(
-            &path::Path::new(&format!("templates/{}.soda", TEMPLATES[template_id]))
+            &path::Path::new(&format!("assets/{}.soda", TEMPLATES[template_id]))
                 .to_string_lossy(),
         )
         .unwrap();
