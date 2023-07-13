@@ -28,7 +28,7 @@ fn index() -> Value {
         .unwrap();
         templates.push(template.metadata);
     }
-    json!({ "templates": templates.iter().enumerate().collect::<Vec<_>>() })
+    json!({ "templates": templates })
 }
 
 #[shuttle_runtime::main]
