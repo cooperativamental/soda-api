@@ -16,7 +16,7 @@ const TEMPLATES: &'static [&'static str] = &[
     "seahorse_experimental",
 ];
 
-#[get("/")]
+#[get("/templates")]
 fn index() -> Value {
    // read all the files in the template folder
     let mut templates = Vec::new();
