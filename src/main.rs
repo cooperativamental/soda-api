@@ -1,16 +1,42 @@
 #[macro_use]
 extern crate rocket;
 mod default_template;
-use rocket::serde::{
-    json::{serde_json::json, Json, Value},
-    Deserialize
+use rocket::{
+    fairing::{Fairing, Info, Kind},
+    http::Header,
+    serde::{
+        json::{serde_json::json, Json, Value},
+        Deserialize,
+    },
+    Request, Response,
 };
 use soda_sol::*;
 
+pub struct CORS;
+
+#[rocket::async_trait]
+impl Fairing for CORS {
+    fn info(&self) -> Info {
+        Info {
+            name: "Add CORS headers to responses",
+            kind: Kind::Response,
+        }
+    }
+
+    async fn on_response<'r>(&self, _request: &'r Request<'_>, response: &mut Response<'r>) {
+        response.set_header(Header::new("Access-Control-Allow-Origin", "*"));
+        response.set_header(Header::new(
+            "Access-Control-Allow-Methods",
+            "POST, GET, PATCH, OPTIONS",
+        ));
+        response.set_header(Header::new("Access-Control-Allow-Headers", "*"));
+        response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
+    }
+}
 
 #[shuttle_runtime::main]
 async fn rocket() -> shuttle_rocket::ShuttleRocket {
-    let rocket = rocket::build().mount("/", routes![index, templates, get_project_files]);
+    let rocket = rocket::build().attach(CORS).mount("/", routes![index, templates, get_project_files]);
     Ok(rocket.into())
 }
 
