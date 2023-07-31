@@ -61,7 +61,6 @@ struct GenerateReq {
 
 #[post(
     "/get_project_files/<template_id>",
-    format = "json",
     data = "<generate_req>"
 )]
 fn get_project_files(template_id: usize, generate_req: Json<GenerateReq>) -> Value {
