@@ -2039,6 +2039,7 @@ dependencies = [
 name = "soda"
 version = "0.1.0"
 dependencies = [
+ "bincode",
  "rocket",
  "shuttle-rocket",
  "shuttle-runtime",

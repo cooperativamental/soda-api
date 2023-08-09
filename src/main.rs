@@ -11,8 +11,15 @@ use rocket::{
     Request, Response,
 };
 use soda_sol::*;
-
+use bincode::deserialize;
 pub struct CORS;
+
+static DEFAULT_TEMPLATE: &'static [u8] = include_bytes!("default.soda");
+static FLUTTER_TEMPLATE: &'static [u8] = include_bytes!("flutter_experimental.soda");
+static REACT_NATIVE_TEMPLATE: &'static [u8] = include_bytes!("react_native.soda");
+static SEAHORSE_TEMPLATE: &'static [u8] = include_bytes!("seahorse.soda");
+static TEMPLATES_LIST: &'static [&[u8]; 4] = &[DEFAULT_TEMPLATE, FLUTTER_TEMPLATE, REACT_NATIVE_TEMPLATE,SEAHORSE_TEMPLATE];
+    
 
 #[rocket::async_trait]
 impl Fairing for CORS {
@@ -42,7 +49,8 @@ async fn rocket() -> shuttle_rocket::ShuttleRocket {
 
 #[get("/templates")]
 fn templates() -> Value {
-    json!({ "templates":[ default_template::default_template().metadata]  })
+    let templates: Vec<TemplateMetadata> = TEMPLATES_LIST.map(|template|deserialize::<Template>(&template).unwrap().metadata).to_vec();
+    json!({ "templates":templates  })
 }
 
 #[get("/")]
@@ -65,7 +73,7 @@ struct GenerateReq {
 )]
 fn get_project_files(template_id: usize, generate_req: Json<GenerateReq>) -> Value {
     let GenerateReq { idl } = generate_req.into_inner();
-    let template = default_template::default_template();
+    let template = deserialize::<Template>(&TEMPLATES_LIST[template_id]).unwrap();
     let files = generate_project(template, &idl);
     json!({ "files": files })
 }
