@@ -1,6 +1,5 @@
 #[macro_use]
 extern crate rocket;
-mod default_template;
 use rocket::{
     fairing::{Fairing, Info, Kind},
     http::Header,
@@ -14,11 +13,12 @@ use soda_sol::*;
 use bincode::deserialize;
 pub struct CORS;
 
-static DEFAULT_TEMPLATE: &'static [u8] = include_bytes!("default.soda");
-static FLUTTER_TEMPLATE: &'static [u8] = include_bytes!("flutter_experimental.soda");
+static DEFAULT_TEMPLATE: &'static [u8] = include_bytes!("anchor.soda");
+static FLUTTER_TEMPLATE: &'static [u8] = include_bytes!("flutter.soda");
 static REACT_NATIVE_TEMPLATE: &'static [u8] = include_bytes!("react_native.soda");
 static SEAHORSE_TEMPLATE: &'static [u8] = include_bytes!("seahorse.soda");
-static TEMPLATES_LIST: &'static [&[u8]; 4] = &[DEFAULT_TEMPLATE, FLUTTER_TEMPLATE, REACT_NATIVE_TEMPLATE,SEAHORSE_TEMPLATE];
+static NEXTJS_TEMPLATE: &'static [u8] = include_bytes!("nextjs.soda");
+static TEMPLATES_LIST: &'static [&[u8]; 5] = &[DEFAULT_TEMPLATE, FLUTTER_TEMPLATE, REACT_NATIVE_TEMPLATE, SEAHORSE_TEMPLATE, NEXTJS_TEMPLATE];
     
 
 #[rocket::async_trait]
